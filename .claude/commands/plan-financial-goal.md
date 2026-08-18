@@ -42,8 +42,8 @@ Otherwise, start a **New run**.
 
 1. Read `runs/<run-id>/workflow-state.json`. If it doesn't exist, tell the
    user this run-id is unknown and stop.
-2. If `progress` is present, report it directly to the user, e.g. `Возобновляю
-   run-2026-08-18-001 — шаг 4 из 8: Анализ денежного потока`, using
+2. If `progress` is present, report it directly to the user, e.g. `Resuming
+   run-2026-08-18-001 — step 4 of 8: Analyzing cashflow`, using
    `progress.current_index`/`progress.total` and that step's `label`. If
    `progress` is absent (an older run from before this field existed), fall
    back to reporting which `stages` entries are `completed` vs.
@@ -60,7 +60,7 @@ From step 2 onward, `workflow-state.json` holds `progress.steps` — the fixed,
 ordered list of steps *this run* will go through (see `CLAUDE.md`'s
 "Progress reporting" section for the exact shape). Before invoking the agent
 for each step, post one short standalone message to the user in the form
-`Шаг <current_index+1> из <total>: <label>` (translate `label` to the user's
+`Step <current_index+1> of <total>: <label>` (translate `label` to the user's
 language), then update that step's `status` to `in_progress` in
 `workflow-state.json` (and the previous step's `status` to `completed`)
 before making the Task tool call. This is a UI banner, not a question — it
@@ -70,12 +70,12 @@ A `financial-auditor` retry (step 5 below) or a `revise:` loop (step 7 below)
 re-runs a step that's already in the list — reuse its existing entry (moving
 its `status` back to `in_progress` then `completed`) rather than appending a
 new one or changing `total`; the banner should note the attempt/revision,
-e.g. `Шаг 6 из 8: Аудит качества (попытка 2 из 3)`.
+e.g. `Step 6 of 8: Running quality audit (attempt 2 of 3)`.
 
 ## 1. Requirements
 
-Before the first invocation of `requirements-formalizer`, post `Шаг 1:
-Формализация требований` (no "из N" yet — the total isn't known until step 2).
+Before the first invocation of `requirements-formalizer`, post `Step 1:
+Formalizing requirements` (no "of N" yet — the total isn't known until step 2).
 
 Invoke `requirements-formalizer` (Task tool, subagent_type
 `requirements-formalizer`) with the user's raw input.
@@ -135,14 +135,14 @@ whichever of `income-tax-modeler`/`market-data-fetcher` were just decided as
 not needed, and write the result to `workflow-state.json`'s `progress` field
 — `requirements-formalizer` already `completed`, everything else `pending`,
 `current_index` pointing at the first `pending` entry, `total` = the list's
-length. Mention the total as part of the same message, e.g. `Всего шагов в
-этом прогоне: 8`.
+length. Mention the total as part of the same message, e.g. `Total steps in
+this run: 8`.
 
 ## 3. Parallel data-gathering
 
 If both `income-tax-modeler` and `market-data-fetcher` are needed, post one
-combined progress banner covering both step numbers (e.g. `Шаги 2–3 из 10:
-Сбор данных (налоговое моделирование и рыночные данные, параллельно)`), mark
+combined progress banner covering both step numbers (e.g. `Steps 2-3 of 10:
+Gathering data (tax modeling and market data, in parallel)`), mark
 both their `progress` entries `in_progress`, then invoke them **in parallel**
 (both Task tool calls in the same turn — they don't depend on each other). If
 only one is needed, post its own single-step banner and invoke just that one.
@@ -179,9 +179,9 @@ Read `financial-auditor`'s `RESULT`.
 - **FAIL**: for each entry in `FAILURES`, look up `attributed_to`. Increment
   `gate_retries.<agent>` in `workflow-state.json`.
   - If the count is ≤ 3: post a retry banner for the attributed step (e.g.
-    `Шаг 5 из 8: Построение вариантов (исправление после аудита, попытка 2 из
-    3)` if `goal-path-planner` is being retried, or `Шаг 6 из 8: Аудит
-    качества (попытка 2 из 3)` if the audit itself is retried directly), then
+    `Step 5 of 8: Building candidate paths (fix after audit, attempt 2 of 3)`
+    if `goal-path-planner` is being retried, or `Step 6 of 8: Running quality
+    audit (attempt 2 of 3)` if the audit itself is retried directly), then
     re-invoke **only that agent** (not the whole pipeline). If its output
     changed, also re-invoke any agent further down the pipeline that already
     consumed the old version (e.g. if `feasibility-assessor`'s artifact
@@ -189,8 +189,8 @@ Read `financial-auditor`'s `RESULT`.
     matters if the failure is on `goal-path-planner` — in that case,
     `feasibility-assessor` must also be re-run against the corrected
     artifact; post its own step banner again too). Then re-invoke
-    `financial-auditor` again (another `Шаг 6 из 8: Аудит качества (попытка N
-    из 3)` banner).
+    `financial-auditor` again (another `Step 6 of 8: Running quality audit
+    (attempt N of 3)` banner).
   - If the count exceeds 3: **stop**. Do not invoke `plan-builder` or
     `report-builder`. Set the stage `failed` in `workflow-state.json` (leave
     the corresponding `progress` entry as `in_progress`, not `completed`, so
@@ -205,8 +205,8 @@ then invoke `plan-builder`. Mark it `completed` once it returns.
 
 ## 7. Human approval
 
-Post the `human-approval` step's progress banner (e.g. `Шаг 7 из 8: Ожидание
-вашего утверждения`) and mark it `in_progress`. Read `artifacts/plan.md`'s
+Post the `human-approval` step's progress banner (e.g. `Step 7 of 8: Waiting
+for your approval`) and mark it `in_progress`. Read `artifacts/plan.md`'s
 Executive Summary and present a short summary to the user (verdict,
 recommended path, the one most important number). Ask: `Approve this plan
 for the final report? [approve / revise: <feedback>]`
@@ -216,8 +216,8 @@ for the final report? [approve / revise: <feedback>]`
 - **`revise: <feedback>`**: this reuses the `goal-path-planner` →
   `feasibility-assessor` → `plan-builder` step entries already in `progress`
   — move each back to `in_progress` then `completed` as it reruns (posting
-  each step's banner again, e.g. `Шаг 5 из 8: Построение вариантов
-  (ревизия)`), and move `human-approval` back to `pending` until the updated
+  each step's banner again, e.g. `Step 5 of 8: Building candidate paths
+  (revision)`), and move `human-approval` back to `pending` until the updated
   summary is approved. `total` doesn't change. Re-invoke the goal-path-planner
   (with the feedback) → `feasibility-assessor` → `financial-auditor` →
   `plan-builder`, then present the updated summary again. Repeat until
@@ -225,8 +225,8 @@ for the final report? [approve / revise: <feedback>]`
 
 ## 8. Final report
 
-Post the `report-builder` step's progress banner (e.g. `Шаг 8 из 8:
-Формирование финального отчёта`), update `workflow-state.json`, then invoke
+Post the `report-builder` step's progress banner (e.g. `Step 8 of 8:
+Generating final report`), update `workflow-state.json`, then invoke
 `report-builder`. It will only succeed if `approval.status` is `"approved"`
 — the `approval_gate_guard` hook enforces this regardless of what this
 coordinator does, so there is no way to skip this step accidentally. Mark it

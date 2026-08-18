@@ -190,12 +190,12 @@ agents that were skipped (e.g. a debt-payoff run skipping
 this run will actually do.
 
 Before invoking the agent/step for each entry, the coordinator posts a short
-one-line progress banner to the user, e.g. `Шаг 4 из 8: Анализ денежного
-потока`, and updates that step's `status` (`pending` → `in_progress` →
-`completed`) in `workflow-state.json`. A `financial-auditor` retry loop does
-not consume additional steps — it stays on the same `financial-auditor` step
-entry, with the banner noting the attempt number (e.g. `Шаг 6 из 8: Аудит
-качества (попытка 2 из 3)`). A `revise:` loop at the human-approval step
+one-line progress banner to the user, e.g. `Step 4 of 8: Analyzing cashflow`,
+and updates that step's `status` (`pending` → `in_progress` → `completed`) in
+`workflow-state.json`. A `financial-auditor` retry loop does not consume
+additional steps — it stays on the same `financial-auditor` step entry, with
+the banner noting the attempt number (e.g. `Step 6 of 8: Running quality
+audit (attempt 2 of 3)`). A `revise:` loop at the human-approval step
 similarly re-runs earlier step entries in place (their `status` moves back to
 `in_progress` then `completed` again) rather than adding new steps or
 changing `total`.
