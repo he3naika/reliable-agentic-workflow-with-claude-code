@@ -14,3 +14,6 @@ __pycache__/
 # OS cruft
 .DS_Store
 Thumbs.db
+
+# Workflow run outputs — user-specific data, not repo content
+runs/

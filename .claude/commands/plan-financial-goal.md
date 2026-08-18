@@ -49,11 +49,36 @@ Otherwise, start a **New run**.
 ## 1. Requirements
 
 Invoke `requirements-formalizer` (Task tool, subagent_type
-`requirements-formalizer`) with the user's raw input. Read its returned
-`GOAL_TYPE`. Present its confirmation summary to the user. Wait for the user
-to not dispute it (any response other than a correction counts as implicit
-confirmation) before proceeding — if they correct something, re-invoke
-`requirements-formalizer` with the correction and re-confirm.
+`requirements-formalizer`) with the user's raw input.
+
+**You, the coordinator, are the only one with a live turn-by-turn dialogue
+with the user — `requirements-formalizer` runs once per invocation and
+returns. So the one-question-at-a-time interactive Q&A is something you
+drive, not something you delegate.**
+
+- If it returns `STATUS: needs_input` with an `OPEN_QUESTIONS` list: ask the
+  user **exactly one** question from that list, as its own message, and wait
+  for their reply. Do not batch multiple questions into one message, and do
+  not show the user the rest of the list. Once they answer, ask the next
+  question the same way. Continue until every question in the list has been
+  asked and answered.
+- Once all questions from that round are answered, re-invoke
+  `requirements-formalizer` **once**, passing along the original input plus
+  every question/answer pair collected this round, so it can update
+  `artifacts/requirements.md`.
+- If the re-invocation again returns `STATUS: needs_input` (a follow-up round
+  of questions), repeat the same one-at-a-time process — never assume one
+  round is enough.
+- Once it returns `STATUS: success`, read its `GOAL_TYPE` and present its
+  confirmation summary to the user as a single message (this final summary
+  is a recap, not a new question, so it's fine as one message). Wait for the
+  user to not dispute it (any response other than a correction counts as
+  implicit confirmation) before proceeding — if they correct something,
+  re-invoke `requirements-formalizer` with the correction and re-confirm.
+
+The same one-question-at-a-time rule applies to the "Adaptive escalation"
+re-invocation in step 4 below, and to any other point in this workflow where
+`requirements-formalizer` comes back with `OPEN_QUESTIONS`.
 
 Set `goal_type` and `requirements_confirmed: true` in `workflow-state.json`.
 
@@ -88,8 +113,11 @@ Invoke in order, each depending on the previous:
    `retirement-income-planner`, matching `goal_type`.
    - **If it returns `STATUS: failed` with a `NEEDS` field** (this happens
      with `debt-payoff-planner` when loan-terms research comes up empty):
-     re-invoke `requirements-formalizer` asking the user **only** the fields
-     named in `NEEDS`. Once answered, re-invoke the goal-path-planner.
+     re-invoke `requirements-formalizer` telling it to ask the user **only**
+     the fields named in `NEEDS`. When it returns `OPEN_QUESTIONS`, ask them
+     to the user one at a time as in step 1 — never batch them. Once all are
+     answered, re-invoke `requirements-formalizer` with the answers, then
+     re-invoke the goal-path-planner.
 3. `feasibility-assessor`
 4. `financial-auditor`
 
