@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+
+# Secrets — see README "Secrets" section. Nothing here should ever be needed
+# for the MCP server this repo ships with, but this is where a future one
+# would go.
+.env
+.env.*
+!.env.example
+
+# OS cruft
+.DS_Store
+Thumbs.db
