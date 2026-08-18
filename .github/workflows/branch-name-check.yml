@@ -1,0 +1,19 @@
+name: Branch naming convention
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  check-branch-name:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify source branch matches feature/*
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          echo "Source branch: $HEAD_REF"
+          if [[ "$HEAD_REF" != feature/* ]]; then
+            echo "::error::Branch '$HEAD_REF' does not match the required 'feature/*' naming pattern."
+            exit 1
+          fi
