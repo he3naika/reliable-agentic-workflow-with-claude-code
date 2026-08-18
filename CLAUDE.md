@@ -159,9 +159,50 @@ runs/<run-id>/
     "requirements-formalizer": {"status": "completed", "artifact": "artifacts/requirements.md", "updated_at": "..."}
   },
   "gate_retries": {"feasibility-assessor": 1},
-  "approval": {"status": "pending", "feedback": null}
+  "approval": {"status": "pending", "feedback": null},
+  "progress": {
+    "steps": [
+      {"key": "requirements-formalizer", "label": "Formalize requirements", "status": "completed"},
+      {"key": "income-tax-modeler", "label": "Model net income", "status": "completed"},
+      {"key": "market-data-fetcher", "label": "Fetch market data", "status": "completed"},
+      {"key": "cashflow-analyzer", "label": "Analyze cashflow", "status": "in_progress"},
+      {"key": "goal-path-planner", "label": "Build candidate paths", "status": "pending"},
+      {"key": "feasibility-assessor", "label": "Assess feasibility", "status": "pending"},
+      {"key": "financial-auditor", "label": "Run quality audit", "status": "pending"},
+      {"key": "plan-builder", "label": "Assemble plan", "status": "pending"},
+      {"key": "human-approval", "label": "Wait for your approval", "status": "pending"},
+      {"key": "report-builder", "label": "Generate final report", "status": "pending"}
+    ],
+    "current_index": 3,
+    "total": 10
+  }
 }
 ```
+
+## Progress reporting
+
+`progress.steps` is the fixed, ordered list of steps **this specific run**
+will go through — decided once, right after step 2 of the coordinator
+(deciding which of `income-tax-modeler`/`market-data-fetcher` are needed),
+and written to `workflow-state.json` before the pipeline starts. Steps for
+agents that were skipped (e.g. a debt-payoff run skipping
+`income-tax-modeler`) are simply not included, so `total` reflects only what
+this run will actually do.
+
+Before invoking the agent/step for each entry, the coordinator posts a short
+one-line progress banner to the user, e.g. `Шаг 4 из 8: Анализ денежного
+потока`, and updates that step's `status` (`pending` → `in_progress` →
+`completed`) in `workflow-state.json`. A `financial-auditor` retry loop does
+not consume additional steps — it stays on the same `financial-auditor` step
+entry, with the banner noting the attempt number (e.g. `Шаг 6 из 8: Аудит
+качества (попытка 2 из 3)`). A `revise:` loop at the human-approval step
+similarly re-runs earlier step entries in place (their `status` moves back to
+`in_progress` then `completed` again) rather than adding new steps or
+changing `total`.
+
+On `--resume`, the coordinator reads `progress` and reports `current_index`/
+`total` directly instead of recomputing it, so the user immediately sees
+where the run stands.
 
 ## Resume
 
