@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "yahoo-finance": {
+      "command": "uvx",
+      "args": ["--system-certs", "--from", "git+https://github.com/Alex2Yang97/yahoo-finance-mcp", "yahoo-finance-mcp"]
+    }
+  }
+}
