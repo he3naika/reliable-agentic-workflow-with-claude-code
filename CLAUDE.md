@@ -125,8 +125,12 @@ Both are wired in `.claude/settings.json`.
 ## MCP
 
 `yahoo-finance` (community server, `Alex2Yang97/yahoo-finance-mcp`, wraps
-public `yfinance` data — no API key). Configured in `.mcp.json`. Used by
-`market-data-fetcher` for historical instrument returns. On MCP failure,
+public `yfinance` data — no API key). Configured in `.mcp.json`, pinned to
+`mcp<2` via `uvx --with` — the package declares `mcp[cli]>=1.6.0` with no
+upper bound, and resolving to the real latest (`mcp` 2.0.0) breaks its own
+`from mcp.server.fastmcp import FastMCP` import, so the server fails to
+start at all without this pin. Used by `market-data-fetcher` for historical
+instrument returns. On MCP failure,
 `market-data-fetcher` retries once, then falls back to WebSearch for the same
 benchmark figures with a cited source — it never fabricates a number.
 
