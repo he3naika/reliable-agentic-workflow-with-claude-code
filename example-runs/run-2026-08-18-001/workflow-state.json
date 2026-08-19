@@ -1,0 +1,49 @@
+{
+  "run_id": "run-2026-08-18-001",
+  "goal_type": "debt_payoff",
+  "requirements_confirmed": true,
+  "stages": {
+    "requirements-formalizer": {
+      "status": "completed",
+      "artifact": "artifacts\\requirements.md",
+      "updated_at": "2026-08-18T12:33:17.645780+00:00"
+    },
+    "cashflow-analyzer": {
+      "status": "completed",
+      "artifact": "artifacts\\cashflow.md",
+      "updated_at": "2026-08-18T12:34:13.951910+00:00"
+    },
+    "goal-path-planner": {
+      "status": "completed",
+      "artifact": "artifacts\\goal-paths.md",
+      "updated_at": "2026-08-18T12:38:15.057633+00:00"
+    },
+    "feasibility-assessor": {
+      "status": "completed",
+      "artifact": "artifacts\\feasibility.md",
+      "updated_at": "2026-08-18T12:49:13.183448+00:00"
+    },
+    "financial-auditor": {
+      "status": "completed",
+      "artifact": "artifacts\\audit-report.md",
+      "updated_at": "2026-08-18T12:52:04.852757+00:00"
+    },
+    "plan-builder": {
+      "status": "completed",
+      "artifact": "artifacts\\plan.md",
+      "updated_at": "2026-08-18T12:54:29.858049+00:00"
+    },
+    "report-builder": {
+      "status": "completed",
+      "artifact": "financial-goal-plan.md",
+      "updated_at": "2026-08-18T12:56:23.769721+00:00"
+    }
+  },
+  "gate_retries": {
+    "debt-payoff-planner": 1
+  },
+  "approval": {
+    "status": "approved",
+    "feedback": null
+  }
+}

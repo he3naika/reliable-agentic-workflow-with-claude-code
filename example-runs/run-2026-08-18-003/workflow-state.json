@@ -1,0 +1,115 @@
+{
+  "run_id": "run-2026-08-18-003",
+  "goal_type": "retirement_income",
+  "requirements_confirmed": true,
+  "stages": {
+    "requirements-formalizer": {
+      "status": "completed",
+      "artifact": "artifacts\\requirements.md",
+      "updated_at": "2026-08-18T16:06:38.117948+00:00"
+    },
+    "market-data-fetcher": {
+      "status": "completed",
+      "artifact": "artifacts\\market-data.md",
+      "updated_at": "2026-08-18T15:47:07.340826+00:00"
+    },
+    "income-tax-modeler": {
+      "status": "completed",
+      "artifact": "artifacts\\net-income.md",
+      "updated_at": "2026-08-18T16:08:11.959866+00:00"
+    },
+    "cashflow-analyzer": {
+      "status": "completed",
+      "artifact": "artifacts\\cashflow.md",
+      "updated_at": "2026-08-18T16:09:45.683876+00:00"
+    },
+    "goal-path-planner": {
+      "status": "completed",
+      "artifact": "artifacts\\goal-paths.md",
+      "updated_at": "2026-08-18T16:13:21.719752+00:00"
+    },
+    "feasibility-assessor": {
+      "status": "completed",
+      "artifact": "artifacts\\feasibility.md",
+      "updated_at": "2026-08-18T16:17:30.860448+00:00"
+    },
+    "financial-auditor": {
+      "status": "completed",
+      "artifact": "artifacts\\audit-report.md",
+      "updated_at": "2026-08-18T16:26:50.087782+00:00"
+    },
+    "plan-builder": {
+      "status": "completed",
+      "artifact": "artifacts\\plan.md",
+      "updated_at": "2026-08-18T16:30:41.277079+00:00"
+    },
+    "report-builder": {
+      "status": "completed",
+      "artifact": "financial-goal-plan.md",
+      "updated_at": "2026-08-18T16:46:32.266222+00:00"
+    }
+  },
+  "gate_retries": {
+    "feasibility-assessor": 1
+  },
+  "approval": {
+    "status": "approved",
+    "feedback": null
+  },
+  "progress": {
+    "steps": [
+      {
+        "key": "requirements-formalizer",
+        "label": "Formalize requirements",
+        "status": "completed"
+      },
+      {
+        "key": "income-tax-modeler",
+        "label": "Model net income",
+        "status": "completed"
+      },
+      {
+        "key": "market-data-fetcher",
+        "label": "Fetch market data",
+        "status": "completed"
+      },
+      {
+        "key": "cashflow-analyzer",
+        "label": "Analyze cashflow",
+        "status": "completed"
+      },
+      {
+        "key": "goal-path-planner",
+        "label": "Build candidate paths",
+        "status": "completed"
+      },
+      {
+        "key": "feasibility-assessor",
+        "label": "Assess feasibility",
+        "status": "completed"
+      },
+      {
+        "key": "financial-auditor",
+        "label": "Run quality audit",
+        "status": "completed"
+      },
+      {
+        "key": "plan-builder",
+        "label": "Assemble plan",
+        "status": "completed"
+      },
+      {
+        "key": "human-approval",
+        "label": "Wait for your approval",
+        "status": "completed"
+      },
+      {
+        "key": "report-builder",
+        "label": "Generate final report",
+        "status": "completed"
+      }
+    ],
+    "current_index": 9,
+    "total": 10
+  }
+}

@@ -58,9 +58,12 @@ The coordinator will:
 Each run creates its own directory under `runs/run-<date>-<n>/` with every
 intermediate artifact, `workflow-state.json`, and the final
 `financial-goal-plan.md` / `.html`. `runs/` is gitignored (it's your own
-financial data, not repo content) — nothing is checked in, but after a few
-runs you'll accumulate examples of different goal types locally, including
-ones that hit a gate retry or a market-data MCP fallback to WebSearch.
+financial data, not repo content) — nothing there is checked in.
+
+See [`example-runs/`](./example-runs/) for four checked-in sample runs
+(synthetic inputs, not anyone's real data) demonstrating each goal type
+(`debt_payoff`, `savings_goal`, `retirement_income` ×2), a `financial-auditor`
+gate retry, and a market-data MCP fallback to WebSearch.
 
 ## Resuming an interrupted run
 

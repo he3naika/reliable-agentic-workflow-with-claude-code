@@ -136,6 +136,11 @@ benchmark figures with a cited source — it never fabricates a number.
 
 ## Run directory layout & state
 
+`runs/` is gitignored — it holds your own financial data, not repo content.
+See [`example-runs/`](./example-runs/) for checked-in sample runs (synthetic
+inputs) covering each goal type, a gate retry, and an MCP-to-WebSearch
+fallback.
+
 Each invocation creates `runs/<run-id>/` (e.g. `runs/run-2026-08-18-001/`):
 ```
 runs/<run-id>/
