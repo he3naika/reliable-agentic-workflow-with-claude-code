@@ -95,6 +95,17 @@ paths (may take a few minutes — researching lender terms)`. This is a
 one-time heads-up in the banner text itself, not a recurring update — there
 is no live "still on attempt 2" ping while the step runs.
 
+**If a subagent invocation itself dies before returning anything** (e.g. a
+transient API error — "the response stopped arriving" — rather than a
+documented `STATUS: failed`/gate failure), this is infrastructure flakiness,
+not a content problem: just re-invoke the same agent once with the same
+instructions. It doesn't consume a `gate_retries` slot — that counter is
+reserved for `financial-auditor`-attributed content failures — and it
+doesn't get its own progress-banner update, since the step was already
+posted as `in_progress`. If the retry also dies the same way, treat it like
+any other unresolved failure: stop and report to the user rather than
+retrying indefinitely.
+
 ## 1. Requirements
 
 Before the first invocation of `requirements-formalizer`, post `Step 1:
