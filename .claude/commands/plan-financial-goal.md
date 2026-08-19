@@ -53,6 +53,18 @@ Otherwise, start a **New run**.
    cashflow-analyzer → goal-path-planner → feasibility-assessor →
    financial-auditor → plan-builder → human-approval → report-builder. Do
    not re-invoke any `completed` stage.
+4. **Exception:** treat `requirements-formalizer` as done only if
+   `requirements_confirmed` is `true` at the top level of
+   `workflow-state.json` — do not trust `stages.requirements-formalizer.status`
+   alone for this one stage. The `post_write_state` hook marks that stage
+   `completed` as soon as `requirements.md` is written at all, even for an
+   interim round that returned `STATUS: needs_input` mid-Q&A; `requirements_confirmed`
+   is the only field that's actually set once the Q&A is done (see step 1
+   above). If `stages.requirements-formalizer.status` is `completed` but
+   `requirements_confirmed` is `false`, resume by re-invoking
+   `requirements-formalizer` with the existing (partial) `requirements.md` as
+   context, and continue the one-question-at-a-time flow from step 1 as if
+   it had just returned `OPEN_QUESTIONS` — do not skip straight to step 2.
 
 ## Progress banners
 
