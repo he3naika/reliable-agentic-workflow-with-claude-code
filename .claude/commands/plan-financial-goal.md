@@ -84,6 +84,17 @@ its `status` back to `in_progress` then `completed`) rather than appending a
 new one or changing `total`; the banner should note the attempt/revision,
 e.g. `Step 6 of 8: Running quality audit (attempt 2 of 3)`.
 
+**Steps with a retry/fallback chain can genuinely take several minutes** —
+`income-tax-modeler` and `market-data-fetcher` each retry an MCP call before
+falling back to WebSearch, and `debt-payoff-planner` may need WebSearch to
+research lender-specific terms. Say so up front in that step's banner so the
+user isn't left wondering whether the run has stalled, e.g. `Step 2-3 of 10:
+Gathering data (tax modeling and market data, in parallel — may take a few
+minutes if a source needs to fall back)` or `Step 5 of 8: Building candidate
+paths (may take a few minutes — researching lender terms)`. This is a
+one-time heads-up in the banner text itself, not a recurring update — there
+is no live "still on attempt 2" ping while the step runs.
+
 ## 1. Requirements
 
 Before the first invocation of `requirements-formalizer`, post `Step 1:
@@ -154,12 +165,13 @@ this run: 8`.
 
 If both `income-tax-modeler` and `market-data-fetcher` are needed, post one
 combined progress banner covering both step numbers (e.g. `Steps 2-3 of 10:
-Gathering data (tax modeling and market data, in parallel)`), mark
-both their `progress` entries `in_progress`, then invoke them **in parallel**
-(both Task tool calls in the same turn — they don't depend on each other). If
-only one is needed, post its own single-step banner and invoke just that one.
-If neither is needed, skip straight to step 4. Mark whichever ran as
-`completed` once both/it return.
+Gathering data (tax modeling and market data, in parallel — may take a few
+minutes if a source needs to fall back)`, per "Progress banners" above),
+mark both their `progress` entries `in_progress`, then invoke them **in
+parallel** (both Task tool calls in the same turn — they don't depend on
+each other). If only one is needed, post its own single-step banner with the
+same fallback caveat and invoke just that one. If neither is needed, skip
+straight to step 4. Mark whichever ran as `completed` once both/it return.
 
 ## 4. Sequential pipeline
 
@@ -169,7 +181,11 @@ banner and update `workflow-state.json` before each invocation, per
 1. `cashflow-analyzer`
 2. Exactly one of `savings-goal-planner` / `debt-payoff-planner` /
    `retirement-income-planner`, matching `goal_type` (this is the
-   `goal-path-planner` entry in `progress.steps`).
+   `goal-path-planner` entry in `progress.steps`). If it's
+   `debt-payoff-planner`, its banner should carry the same fallback caveat as
+   above (e.g. `Step 5 of 8: Building candidate paths (may take a few
+   minutes — researching lender terms)`), since it may need WebSearch to
+   research lender-specific terms.
    - **If it returns `STATUS: failed` with a `NEEDS` field** (this happens
      with `debt-payoff-planner` when loan-terms research comes up empty):
      re-invoke `requirements-formalizer` telling it to ask the user **only**
