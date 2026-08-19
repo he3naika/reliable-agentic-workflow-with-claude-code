@@ -124,21 +124,11 @@ Both are wired in `.claude/settings.json`.
 
 ## MCP
 
-Two community MCP servers, both configured in `.mcp.json`, both used by
-`market-data-fetcher` for historical instrument returns:
-
-- `yahoo-finance` (`Alex2Yang97/yahoo-finance-mcp`, wraps public `yfinance`
-  data — no API key) — primary source.
-- `tradingview` (`atilaahmettaner/tradingview-mcp`, public TradingView
-  endpoints — no API key/account) — secondary source, genuinely independent
-  of Yahoo Finance's data pipeline rather than another client for the same
-  upstream API.
-
-`market-data-fetcher` tries each source up to 3 times before moving to the
-next: `yahoo-finance` (3 attempts) → `tradingview` (3 attempts) → WebSearch
-for the same benchmark figures with a cited source. It never fabricates a
-number, and records in `market-data.md` which of the three tiers actually
-produced each figure.
+`yahoo-finance` (community server, `Alex2Yang97/yahoo-finance-mcp`, wraps
+public `yfinance` data — no API key). Configured in `.mcp.json`. Used by
+`market-data-fetcher` for historical instrument returns. On MCP failure,
+`market-data-fetcher` retries once, then falls back to WebSearch for the same
+benchmark figures with a cited source — it never fabricates a number.
 
 ## Run directory layout & state
 
