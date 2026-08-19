@@ -57,9 +57,10 @@ The coordinator will:
 
 Each run creates its own directory under `runs/run-<date>-<n>/` with every
 intermediate artifact, `workflow-state.json`, and the final
-`financial-goal-plan.md` / `.html`. Three example runs (different goal types,
-including one that hits a gate retry and one where the market-data MCP call
-fails and falls back to WebSearch) are checked into `runs/` for reference.
+`financial-goal-plan.md` / `.html`. `runs/` is gitignored (it's your own
+financial data, not repo content) — nothing is checked in, but after a few
+runs you'll accumulate examples of different goal types locally, including
+ones that hit a gate retry or a market-data MCP fallback to WebSearch.
 
 ## Resuming an interrupted run
 
