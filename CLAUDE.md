@@ -115,7 +115,7 @@ gate, artifact, and finding to the user instead of continuing with bad data.
   same run directory has `approval.status == "approved"`.
 - **PreToolUse — `no_leak_guard.py`**: blocks writing the final report if its
   content contains internal artifact filenames, internal agent names, or
-  internal status markers (`STATUS:`, `SELF-CHECK:`).
+  internal status markers (`STATUS:`, `SELF-CHECK:`, `ARTIFACT:`, `NEEDS:`).
 - **PostToolUse — `post_write_state.py`**: after any artifact write, updates
   `workflow-state.json` for that run — stage status, artifact path,
   timestamp. This is what makes resume possible.
@@ -153,7 +153,7 @@ runs/<run-id>/
 ```json
 {
   "run_id": "run-2026-08-18-001",
-  "goal_type": "passive_income",
+  "goal_type": "retirement_income",
   "requirements_confirmed": true,
   "stages": {
     "requirements-formalizer": {"status": "completed", "artifact": "artifacts/requirements.md", "updated_at": "..."}

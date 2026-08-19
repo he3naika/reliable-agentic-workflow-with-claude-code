@@ -38,7 +38,7 @@ workflow against two things: **structure** (required sections present) and
 | `goal-paths.md` | Goal Summary, Candidate Paths (≥2, each with target/contribution/instruments/timeline), Assumptions & Sources |
 | `feasibility.md` | Per-Path Verdict, Supporting Calculation, Ranking |
 | `audit-report.md` | Gate Results (one line per gate: PASS/FAIL + finding + attributed agent) |
-| `plan.md` / final report | Executive Summary, Current Position, Paths & Verdicts, Recommendation, Action Plan |
+| `plan.md` / final report | Executive Summary, Current Position, Paths Considered, Verdict, Recommendation, Action Plan |
 
 If an artifact type isn't in this table, ask the caller which sections are
 required instead of guessing.
